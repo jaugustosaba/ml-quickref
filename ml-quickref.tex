@@ -1,0 +1,430 @@
+\documentclass[a4, article]{article}
+
+\author{Jorge Augusto Sabaliauskas}
+
+\title{Machine Learning Quick Reference}
+
+\begin{document}
+
+\maketitle
+
+\section{Linear Regression}
+
+Training set:
+
+\[
+\begin{tabular}{ c | c }
+\hline
+input & output \\
+\hline
+$X^{(1)}$ & $y^{(1)}$ \\
+$X^{(2)}$ & $y^{(2)}$ \\
+$\vdots$ & $\vdots$ \\
+$X^{(m)}$ & $y^{(m)}$ \\
+\end{tabular}
+\]
+
+\subsection{Training Algorithm}
+
+Input vector:
+
+\[
+X^{(i)} =
+\left[
+\begin{array}{c}
+1 \\
+x_{1}^{(i)} \\
+\vdots \\
+x_{d}^{(i)} \\
+\end{array}
+\right]
+\]
+
+Weight vector:
+
+\[
+\Theta =
+\left[
+\begin{array}{c}
+\theta_0 \\
+\vdots \\
+\theta_d \\
+\end{array}
+\right]
+\]
+
+Hypothesis:
+
+\[h_{\Theta}(X^{(i)}) = \theta_0 + \theta_1 x^{(i)}_1 + \dots + \theta^{(i)}_d x_d = \Theta^T X^{(i)}\]
+
+Cost function:
+
+\[J(\Theta) = \frac{1}{2 m} \sum_{i=1}^{m}(h_{\theta}(X^{(i)}) - y^{(i)})^2 = \frac{1}{2 m} \sum_{i=1}^{m}(\Theta^T X^{(i)} - y^{(i)})^2 \]
+
+Gradient:
+
+\[\frac{\partial J(\Theta)}{\partial \theta_k} = \frac{1}{m} \sum_{i=1}^{m}( \Theta^T X^{(i)} - y^{(i)} ) x_k ^{(i)} \]
+
+Update rule:
+
+\[\theta_k \leftarrow \theta_k - \alpha \frac{\partial J(\Theta)}{\partial \theta_k} \]
+
+\[\theta_k \leftarrow \theta_k - \alpha \frac{1}{m} \sum_{i=1}^{m}( \Theta^T X^{(i)} - y^{(i)} ) x_k ^ {(i)} \]
+
+\[\theta_k \leftarrow \theta_k - \alpha \frac{1}{m} \sum_{i=1}^{m}( h_{\Theta}(X^{(i)}) - y^{(i)} ) x_k ^ {(i)} \]
+
+\subsection{Vectorized Implementation}
+
+\[ X' = \left[
+\begin{array}{c}
+X_1 \\
+\vdots \\
+X_{i+1}
+\end{array}
+\right] \]
+
+Gradient:
+
+\[\frac{\partial J(\Theta)}{\partial \theta} = \frac{1}{m} X'^T (X' \Theta - Y) \]
+
+Update rule:
+
+\[\theta \leftarrow \theta - \alpha \frac{\partial J(\Theta)}{\partial \theta} \]
+
+\[\theta \leftarrow \theta - \alpha \frac{1}{m} X'^T (X' \Theta - Y) \]
+
+\section{Logistic Regression}
+
+Training set:
+
+\[
+\begin{tabular}{ c | c }
+\hline
+input & output \\
+\hline
+$X^{(1)}$ & $y^{(1)}$ \\
+$X^{(2)}$ & $y^{(2)}$ \\
+$\vdots$ & $\vdots$ \\
+$X^{(m)}$ & $y^{(m)}$ \\
+\end{tabular}
+\]
+
+\subsection{Training Algorithm}
+
+Logistic function:
+
+\[ f(x) = \frac{1}{1 + e^{-x}} \]
+
+Hypothesis:
+
+\[ h_{\Theta}(X^{(i)}) = f(\Theta^T X^{(i)}) = \frac{1}{1 + e^{-\Theta^T X^{(i)}}} \]
+
+Cost function:
+
+\[ J(\Theta) = - \frac{1}{m} \sum_{i=1}^{m} y^{(i)} \ln(h_{\Theta}(X^{(i)})) + (1 - y^{(i)}) \ln(1 - h_{\Theta}(X^{(i)})) \]
+
+Derivative of logistic function:
+
+\[ \frac{\partial f(x) }{\partial x} = \frac{-1}{(1 + e^{-x})^2} e^{-x} (-1)  = \frac{e^{-x}}{(1 + e^{-x})^2}\]
+
+Gradient:
+
+\[ \frac{\partial J(\Theta)}{\partial \theta_k} = - \frac{1}{m} \sum_{i=1}^{m} \frac{\partial}{\partial h_{\Theta}(X^{(i)})}(y^{(i)} \ln(h_{\Theta}(X^{(i)})) + (1 - y^{(i)}) \ln(1 - h_{\Theta}(X^{(i)}))) \frac{\partial h_{\Theta}(X^{(i)})}{\partial \theta_k} \]
+
+\[ \frac{\partial h_{\Theta}(X^{(i)})}{\partial \theta_k} = \frac{\partial f(\Theta^T X^{(i)})}{\partial \Theta^T X^{(i)}} \frac{\partial \Theta^T X^{(i)}}{\partial \theta_k} \]
+
+\[ \frac{\partial f(\Theta^T X^{(i)})}{\partial \Theta^T X^{(i)}} = \frac{e^{-\Theta^T X^{(i)}}}{(1 + e^{-\Theta^T X^{(i)}})^2} \]
+
+\[ \frac{\partial \Theta^T X^{(i)}}{\partial \theta_k} = \frac{\partial}{\partial \theta_k}(\theta_0 x_0 + \dots + \theta_k x_k + \dots + \theta_d x_d ) = x_k\]
+
+\[ \frac{\partial h_{\Theta}(X^{(i)})}{\partial \theta_k} = \frac{e^{-\Theta^T X^{(i)}}}{(1 + e^{-\Theta^T X^{(i)}})^2} x_k \]
+
+\[ \frac{\partial J(\Theta)}{\partial \theta_k} = - \frac{1}{m} \sum_{i=1}^{m} (y^{(i)} \frac{1}{h_{\Theta}(X^{(i)})} + (1 - y^{(i)}) \frac{-1}{1 - h_{\Theta}(X^{(i)})}) \frac{\partial h_{\Theta}(X^{(i)})}{\partial \theta_k} \]
+
+\[ \frac{\partial J(\Theta)}{\partial \theta_k} = - \frac{1}{m} \sum_{i=1}^{m} (y^{(i)} \frac{1}{\frac{1}{1+e^{\Theta^T X^{(i)}}}} + (y^{(i)} - 1) \frac{1}{1 - \frac{1}{1+e^{\Theta^T X^{(i)}}}}) \frac{\partial h_{\Theta}(X^{(i)})}{\partial \theta_k} \]
+
+\[ \frac{\partial J(\Theta)}{\partial \theta_k} = - \frac{1}{m} \sum_{i=1}^{m} (y^{(i)} \frac{1}{\frac{1}{1+e^{-\Theta^T X^{(i)}}}} + (y^{(i)} - 1) \frac{1}{\frac{e^{-\Theta^T X^{(i)}}}{1+e^{-\Theta^T X^{(i)}}}}) \frac{\partial h_{\Theta}(X^{(i)})}{\partial \theta_k} \]
+
+\[ \frac{\partial J(\Theta)}{\partial \theta_k} = - \frac{1}{m} \sum_{i=1}^{m}(y^{(i)}(1+e^{-\Theta^T X^{(i)}}) + (y^{(i)} - 1)\frac{1+e^{-\Theta^T X^{(i)}}}{e^{-\Theta^T X^{(i)}}}) \frac{\partial h_{-\Theta}(X^{(i)})}{\partial \theta_k}\]
+
+\[ \frac{\partial J(\Theta)}{\partial \theta_k} = - \frac{1}{m} \sum_{i=1}^{m}(y^{(i)}\frac{e^{-\Theta^T X^{(i)}}}{e^{-\Theta^T X^{(i)}}}(1+e^{-\Theta^T X^{(i)}}) + (y^{(i)} - 1)\frac{1+e^{-\Theta^T X^{(i)}}}{e^{-\Theta^T X^{(i)}}}) \frac{e^{-\Theta^T X^{(i)}}}{(1 + e^{-\Theta^T X^{(i)}})^2} x_k\]
+
+\[ \frac{\partial J(\Theta)}{\partial \theta_k} = - \frac{1}{m} \sum_{i=1}^{m}(y^{(i)} e^{i-\Theta^T X^{(i)}} + y^{(i)} - 1) \frac{1}{1 + e^{-\Theta^T X^{(i)}}} x_k \]
+
+\[ \frac{\partial J(\Theta)}{\partial \theta_k} = -\frac{1}{m} \sum_{i=1}^{m}(y^{(i)}(1 + e^{-\Theta^T X^{(i)}}) - 1) \frac{1}{1 + e^{-\Theta^T X^{(i)}}} x_k \]
+
+\[ \frac{\partial J(\Theta)}{\partial \theta_k} = -\frac{1}{m} \sum_{i=1}^{m}(y^{(i)} - \frac{1}{1 + e^{-\Theta^T X^{(i)}}}) x_k \]
+
+\[ \frac{\partial J(\Theta)}{\partial \theta_k} = -\frac{1}{m} \sum_{i=1}^{m}(y^{(i)} - h_{\Theta}(X^{(i)})) x_k = \frac{1}{m} \sum_{i=1}^{m} (h_{\Theta}(X^{(i)}) - y^{(i)}) x_k \]
+
+Update rule:
+
+\[ \theta_k \leftarrow \theta_k - \alpha \frac{\partial J(\Theta)}{\partial \theta_k} \]
+
+\[ \theta_k \leftarrow \theta_k - \alpha \frac{1}{m} \sum_{i=1}^{m} (h_{\Theta}(X^{(i)}) - y^{(i)}) x_k \]
+
+\section{Vectorized Implementation}
+
+\[ X' = \left[
+\begin{array}{c}
+X_1 \\
+\vdots \\
+X_{i+1}
+\end{array}
+\right] \]
+
+\[ \frac{\partial J(\Theta)}{\partial \theta} = \frac{1}{m} X'^T (f(X' \theta) - Y) \]
+
+\[ \theta \leftarrow \theta - \alpha \frac{1}{m} X'^T (f(X' \theta) - Y)  \]
+
+\section{Neural Network}
+
+\subsection{3 Layers}
+
+Neural network with 3 layers: d, q, r units on layer 1, 2, 3 respectively.
+
+\[
+\mbox{Layer 3}
+\left\{
+\begin{array}{l}
+y_1^{(3)} = \theta_{0, 1}^{(2)} 1 + \theta_{1, 1}^{(2)} a_1^{(2)} + \dots + \theta_{q, 1}^{(2)} a_q^{(2)} \\ y_r^{(3)} = \theta_{0, r}^{(2)} 1 + \theta_{1, r}^{(2)} a_1^{(2)} + \dots + \theta_{q, r}^{(2)} a_q^{(2)}
+\end{array}
+\right.
+\Rightarrow
+\begin{array}{l}
+a_1^{(3)} = f(y_1^{(3)}) \\
+a_r^{(3)} = f(y_r^{(3)})
+\end{array}
+\]
+
+\[
+\mbox{Layer 2}
+\left\{
+\begin{array}{l}
+y_1^{(2)} = \theta_{0, 1}^{(1)} 1 + \theta_{1, 1}^{(1)} a_1^{(1)} + \dots + \theta_{d, 1}^{(1)} a_d^{(1)} \\ y_q^{(2)} = \theta_{0, q}^{(1)} 1 + \theta_{1, q}^{(1)} a_1^{(1)} + \dots + \theta_{d, q}^{(1)} a_d^{(1)}
+\end{array}
+\right.
+\Rightarrow
+\begin{array}{l}
+a_1^{(2)} = f(y_1^{(2)}) \\
+a_q^{(2)} = f(y_q^{(2)})
+\end{array}
+\]
+
+\[
+\Theta^{(2)} =
+\left[
+\begin{array}{cccc}
+\theta_{0, 1}^{(2)} & \theta_{1, 1}^{(2)} & \dots & \theta_{q, 1}^{(2)} \\
+\vdots & \vdots & \dots & \vdots \\
+\theta_{0, r}^{(2)} & \theta_{1, r}^{(2)} & \dots & \theta_{q, r}^{(2)}
+\end{array}
+\right]
+\]
+
+\[
+\Theta^{(1)} =
+\left[
+\begin{array}{cccc}
+\theta_{0, 1}^{(1)} & \theta_{1, 1}^{(1)} & \dots & \theta_{d, 1}^{(1)} \\
+\vdots & \vdots & \dots & \vdots \\
+\theta_{0, q}^{(1)} & \theta_{1, q}^{(1)} & \dots & \theta_{d, q}^{(1)}
+\end{array}
+\right]
+\]
+
+Cost function for the neural network:
+
+\[
+J(\Theta^{(1)}, \Theta^{(2)}) = - \frac{1}{m} \sum_{i=1}^m \sum_{j=1}^r y_j^{(i)} \ln(a_j^{(3)}) + (1 - y_j^{(i)}) \ln(1 - a_j^{(3)})
+\]
+
+First we will derive $J(\Theta^{(1)}, \Theta^{(2)})$ with respect to $y_s^{(3)}$ ($ s \in \left\{1, \dots, r \right\}$).
+
+\[
+\frac{\partial J(\Theta^{(1)}, \Theta^{(2)})}{\partial y_s^{(3)}} = - \frac{1}{m} \sum_{i=1}^m \left( a_s^{(3)} - y_s^{(i)} \right) = \frac{1}{m} \sum_{i=1}^m \left( y_s^{(i)} - a_s^{(3)} \right) =
+\frac{1}{m} \sum_{i=1}^m \delta_s^{(3)}\left( i \right)
+\]
+
+Gradient for $\theta_{s,t}^{(2)}$ ($s \in \left\{0, \dots, q+1\right\}$, $t \in \left\{1, \dots, r\right\}$):
+
+\[
+\frac{\partial J(\Theta^{(1)}, \Theta^{(2)})}{\partial \theta_{s, t}^{(2)}} =
+\sum_{j=1}^r \frac{\partial J(\Theta^{(1)}, \Theta^{(2)})}{\partial y_j^{(3)}}
+\frac{\partial y_j^{(3)}}{\theta_{s, t}^{(2)}} = 
+\frac{\partial J(\Theta^{(1)}, \Theta^{(2)})}{\partial y_t^{(3)}}
+\frac{\partial y_t^{(3)}}{\theta_{s, t}^{(2)}} =
+\frac{1}{m} \sum_{i=1}^m \delta_t^{(3)} \left( i \right) a_s^{(2)}
+\]
+
+The error for each estimation on layer 3 is given by:
+
+\[
+\delta_t^{(3)}\left( i \right) = y_t^{(i)} - a_t^{(3)}
+\]
+
+Gradient for $\theta_{s,t}^{(1)}$ ($s \in \left\{0, \dots, d+1\right\}$, $t \in \left\{1, \dots, q\right\}$)
+
+\begin{eqnarray*}
+\frac{\partial J(\Theta^{(1)}, \Theta^{(2)})}{\partial \theta_{s, t}^{(1)}} &= 
+\sum_{j=1}^r \frac{\partial J(\Theta^{(1)}, \Theta^{(2)})}{\partial y_j^{(3)}}
+\frac{\partial y_j^{(3)}}{\partial a_t^{(2)}} \frac{\partial a_t^{(2)}}{ \partial y_t^{(2)} }
+\frac{\partial y_t^{(2)}}{\partial \theta_{s, t}^{(1)}} \\
+&= \frac{1}{m} \sum_{j=1}^r \sum_{i=1}^m \delta_j^{(3)} \theta_{t, j}^{(2)}.f'(y_t^{(2)})a_s^{(1)} \\
+&= \frac{1}{m} \sum_{i=1}^m \left( \sum_{j=1}^r  \delta_j^{(3)} \theta_{t, j}^{(2)}.f'(y_t^{(2)}) \right) a_s^{(1)} \\
+&= \frac{1}{m} \sum_{i=1}^m \delta_t^{(2)} \left( i \right) a_s^{(1)}
+\end{eqnarray*}
+
+The error for each estimation on layer 2 is given by:
+
+\[
+\delta_t^{(2)} \left( i \right) = \sum_{j=1}^r  \delta_j^{(3)} \left( i \right) \theta_{t, j}^{(2)} f'(y_t^{(2)})
+\]
+
+The update rule for each layer is given by:
+
+\[
+\left\{
+\begin{array}{c}
+\theta_{s, t}^{(2)} \leftarrow \theta_{s, t}^{(2)} - \alpha \frac{1}{m} \sum_{i=1}^m \delta_t^{(3)}\left( i \right) a_s^{(2)} \\
+\theta_{s, t}^{(1)} \leftarrow \theta_{s, t}^{(1)} - \alpha \frac{1}{m} \sum_{i=1}^m \delta_t^{(2)}\left( i \right) a_s^{(1)}
+\end{array}
+\right.
+\]
+
+\subsection{$L$ layers}
+
+Generalizing to a neural network with $L$ layers where $n_l$ = number of units on layer m. Outputs for layers l ($l \in \left\{ 1, \dots, L-1 \right\} $)
+
+\[
+\mbox{Layer (l+1)}
+\left\{
+\begin{array}{l}
+y_1^{(l+1)} = \theta_{0, 1}^{(l)} 1 + \theta_{1, 1}^{(l)} a_1^{(l)} + \dots + \theta_{n_l, 1}^{(l)} a_{n_l}^{(l)} 
+\\ y_{n_{l+1}}^{(l+1)} = \theta_{0, n_{l+1}}^{(l)} 1 + \theta_{1, n_{l+1}}^{(l)} a_1^{(l)} + \dots + \theta_{n_l, n_{l+1}}^{(l)} a_{n_l}^{(l)}
+\end{array}
+\right.
+\Rightarrow
+\begin{array}{l}
+a_1^{(l+1)} = f(y_1^{(l+1)}) \\
+a_{n_{l+1}}^{(l+1)} = f(y_{n_{l+1}}^{(l+1)})
+\end{array}
+\]
+
+\[
+\Theta^{(l)} =
+\left[
+\begin{array}{cccc}
+\theta_{0, 1}^{(l)} & \theta_{1, 1}^{(l)} a_1^{(l)} & \dots & \theta_{n_l, 1}^{(l)} \\ 
+\theta_{0, n_{l+1}}^{(l)} & \theta_{1, n_{l+1}}^{(l)} & \dots & \theta_{n_l, n_{l+1}}^{(l)}
+\end{array}
+\right]
+\]
+
+Error on layer l ($l \in \left\{ 2, \dots, L \right\} $):
+
+\[
+\delta_t^{(l)} =
+\left\{
+\begin{array}{l l}
+y_t^{(i)} - a_t^{(L)} & \mbox{if $l = L$} \\
+\sum_{j=1}^{n^{l+1}}  \delta_j^{(l+1)} \left( i \right) \theta_{t, j}^{(l)} f'(y_t^{(l)}) & \mbox{otherwise}
+\end{array}
+\right.
+\]
+
+Gradient for layer l ($l \in \left\{ 1, \dots, L-1 \right\} $):
+
+\[
+\frac{\partial J(\Theta^1, \dots, \Theta^L)}{\partial \theta_{s, t}^{(l)}} =
+\frac{1}{m} \sum_{i=1}^m \delta_t^{(l+1)} \left( i \right) a_s^{(l)}
+\]
+
+Update rule for layer l ($l \in \left\{ 1, \dots, L-1 \right\} $):
+
+\[
+\theta_{s, t}^{(l)} \leftarrow \theta_{s, t}^{(l)} - \alpha \frac{1}{m} \sum_{i=1}^m \delta_t^{(l+1)} \left( i \right) a_s^{(l)}
+\]
+
+\subsection{Vectorized Implementation}
+
+Forward propagation for layer l ($l \in \left\{ 1, \dots, L-1 \right\} $):
+
+\[
+A^{(l)} =
+\left[
+\begin{array}{c}
+a_1^{(l)} \\
+\vdots \\
+a_{n_l}^{(l)}
+\end{array}
+\right]
+\]
+
+\[Y^{(l+1)} = \Theta^{(l)} 
+\left[
+\begin{array}{c}
+1 \\
+A^{(l)}
+\end{array}
+\right]
+\]
+
+\[
+A^{(l+1)} =
+\left[
+\begin{array}{c}
+f(y_1^{(l+1)}) \\
+\vdots \\
+f(y_{n_{l+1}}^{(l+1)})
+\end{array}
+\right]
+\]
+
+
+Back propagation for layer l
+
+\[
+\Delta^{(l)}(i) = 
+\left[
+\begin{array}{c}
+\delta_1^{(l)}(i) \\
+\vdots \\
+\delta_{n_l}^{(l)}(i)
+\end{array}
+\right]
+\]
+
+\[
+\Theta'^{(l)} =
+\left[
+\begin{array}{ccc}
+\theta_{1, 1}^{(l)} & \dots & \theta_{n_l, 1}^{(l)} \\ 
+\theta_{1, n_{l+1}}^{(l)} & \dots & \theta_{n_l, n_{l+1}}^{(l)}
+\end{array}
+\right]
+\]
+
+\[ \Delta^{(l)}(i) = (\Theta'^{(l)})^T \Delta^{(l+1)}(i) \circ f'(y^{(l)}) \]
+
+\[ D^{(l)}(i) = \Delta^{(l+1)}(i) \left[
+\begin{array}{c}
+1 \\
+A^{(l)}(i)
+\end{array}
+\right]^T \]
+
+\[
+\frac{\partial J(\Theta^1, \dots, \Theta^L)}{\partial \Theta^{(l)}} = 
+\frac{1}{m} \sum_{i=1}^m D^{(l)}(i)
+\]
+
+\[
+\Theta^{(l)} \leftarrow \Theta^{(l)} - \alpha \frac{\partial J(\Theta^1, \dots, \Theta^L)}{\partial \Theta^{(l)}}
+\]
+
+\[
+\Theta^{(l)} \leftarrow \Theta^{(l)} - \alpha \frac{1}{m} \sum_{i=1}^m D^{(l)}(i)
+\]
+
+\end{document}
